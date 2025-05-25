@@ -1,7 +1,7 @@
 locals {
   common_tags = {
     Environment  = "staging"
-    Project      = "task-tracker-app"
+    Project      = "web-server"
     ProjectOwner = "Godson Nwaubani"
     ManagedBy    = "Terraform"
   }

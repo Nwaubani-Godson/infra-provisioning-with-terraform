@@ -14,15 +14,14 @@ data "aws_ami" "ubuntu" {
 }
 
 
-resource "aws_instance" "tracker_app_web_server" {
+resource "aws_instance" "web_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   subnet_id     = aws_subnet.public.id
   key_name      = var.key_name
 
-  vpc_security_group_ids = [aws_security_group.tracker_app_sg.id]
+  vpc_security_group_ids = [aws_security_group.web_server_sg.id]
 
-  iam_instance_profile = data.aws_iam_instance_profile.ecr_profile.name
 
   user_data = <<-EOF
               #!/bin/bash
@@ -30,26 +29,21 @@ resource "aws_instance" "tracker_app_web_server" {
               apt-get install -y docker.io docker-compose git
               systemctl enable docker
               systemctl start docker
-
-              # Create app directory
-              mkdir -p /home/ubuntu/tracker-app
-              chown ubuntu /home/ubuntu/tracker-app
               EOF
 
   tags = merge(local.common_tags, {
-    Name = "${var.environment}-tracker-app-server"
+    Name = "${var.environment}-web-server"
   })
 }
 
 
-resource "aws_security_group" "tracker_app_sg" {
-  name        = "${var.environment}-tracker-app-sg"
+resource "aws_security_group" "web_server_sg" {
+  name        = "${var.environment}-web-server-sg"
   description = "Allow web traffic"
   vpc_id      = aws_vpc.main.id
 
-
   tags = merge(local.common_tags, {
-    Name = "${var.environment}-tracker-app-sg"
+    Name = "${var.environment}-web-server-sg"
   })
 
   ingress {
@@ -66,7 +60,7 @@ resource "aws_security_group" "tracker_app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-      ingress {
+    ingress {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
