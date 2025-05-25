@@ -1,6 +1,6 @@
 # Provisioning Infrastructure with Terraform
 
-This project demonstrates infrastructure provisioning to staging and production environments.
+This project demonstrates infrastructure provisioning to staging and production environments and installing some applications upon provisioning.
 
 ## 1. Navigate to Terraform directory
 
